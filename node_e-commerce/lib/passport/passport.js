@@ -8,7 +8,7 @@ module.exports = function(passport) {
     })
 
     passport.deserializeUser(function(id, done) {
-        User.findOne(id, function(error, user) {
+        User.findById(id, function(error, user) {
             done(error, user)
         })
     })
@@ -25,19 +25,24 @@ module.exports = function(passport) {
             }
 
             if(!user) {
+                console.log('user: ', user);
+                
                 done(null, false, req.flash('loginMessage', 'User does not exist'))
-            }
-
-            bcrypt.compare(password, user.password)
-                .then((error, result) => {
-                    if(error === false) {
-                        return done(null, false, req.flash('loginMessage', 'Check email or password'))
-                    } else if(result === false) {
+            } else {
+                bcrypt.compare(password, user.password)
+                .then((result) => {
+                    if(!result) {
                         return done(null, false, req.flash('loginMessage', 'Check email or password'))
                     } else {
                         return done(null, user)
                     }
                 })
+                .catch(error => {
+                    throw error
+                })
+            }
+
+            
         })
     }))
 }

@@ -9,9 +9,9 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 
-require('dotenv').config();
-
 let MongoStore = require('connect-mongo')(session)
+
+require('dotenv').config();
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users/users');
@@ -26,12 +26,7 @@ mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
   
 })
 
-
 let app = express();
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -46,15 +41,30 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
-  store: new MongoStore({url: process.env.MONGODB_URI, autoReconnect: true }),
+  store: new MongoStore({url: process.env.MONGODB_URI, autoReconnect: true}),
   cookie: {
     secure: false,
     maxAge: process.env.COOKIE_LENGTH
   }
 }))
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
+require('./lib/passport/passport')(passport);
+
+
+
+
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+
+  res.locals.error = req.flash('error')
+  res.locals.error_msg = req.flash('error_msg')
+  res.locals.success_msg = req.flash('success_msg')
+
+  next()
+})
 
 app.use(expressValidator({
   errorFormatter: function(param, message, value) {
@@ -73,6 +83,9 @@ app.use(expressValidator({
     }
   }
 }))
+
+app.use('/', indexRouter);
+app.use('/api/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

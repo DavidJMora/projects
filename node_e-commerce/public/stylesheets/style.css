@@ -1,8 +1,4 @@
-body {
+body{
+  background: -webkit-linear-gradient(left, #3931af, #00c6ff);
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
 }
