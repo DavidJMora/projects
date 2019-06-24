@@ -78,7 +78,7 @@ router.get('/edit-profile', function(req, res) {
   res.render('account/profile', {errors: req.flash('errors'), success: req.flash('success')})
 })
 
-router.post('/edit-profile', function(req, res) {
+router.put('/edit-profile', function(req, res) {
   userController.updateUser(req.body, req.user.id)
     .then(user => {
       req.flash('success', "Successfully updated profile")
@@ -91,6 +91,8 @@ router.post('/edit-profile', function(req, res) {
       res.redirect('/api/users/edit-profile')
     })
 })
+
+
 
 
 module.exports = router;

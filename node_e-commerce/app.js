@@ -9,12 +9,15 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 
+let methodOverride = require('method-override');
+
 let MongoStore = require('connect-mongo')(session)
 
 require('dotenv').config();
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users/users');
+let productRouter = require('./routes/product/product');
 
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
@@ -36,6 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 app.use(session({
   resave: true,
@@ -86,6 +90,7 @@ app.use(expressValidator({
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/product', productRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
