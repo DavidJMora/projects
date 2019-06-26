@@ -11,13 +11,16 @@ const passport = require('passport');
 
 let methodOverride = require('method-override');
 
-let MongoStore = require('connect-mongo')(session)
+let MongoStore = require('connect-mongo')(session);
+
+let Category = require('./routes/product/models/Category');
 
 require('dotenv').config();
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users/users');
 let productRouter = require('./routes/product/product');
+let adminRouter = require('./routes/admin/admin')
 
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
@@ -63,11 +66,24 @@ require('./lib/passport/passport')(passport);
 app.use(function(req, res, next) {
   res.locals.user = req.user;
 
-  res.locals.error = req.flash('error')
-  res.locals.error_msg = req.flash('error_msg')
-  res.locals.success_msg = req.flash('success_msg')
+  res.locals.error = req.flash('error');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.success_msg = req.flash('success_msg');
 
   next()
+})
+
+app.use(function(req, res, next) {
+  Category.find({})
+    .then(categories => {
+      res.locals.categories = categories;
+
+      next();
+    })
+    .catch(error => {
+      return next(error)
+    })
+
 })
 
 app.use(expressValidator({
@@ -90,7 +106,8 @@ app.use(expressValidator({
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/product', productRouter)
+app.use('/api/product', productRouter);
+app.use('/api/admin', adminRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
