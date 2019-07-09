@@ -3,7 +3,6 @@ let paginate = require('../utils/pagination');
 
 module.exports = {
     getAllProducts: (params) => {
-
         return new Promise((resolve, reject) => {
             Product.find(params)
                 .then(products => {
@@ -81,6 +80,28 @@ module.exports = {
                         results: data,
                         query: req.query.search,
                     })
+                }
+            })
+        }
+    },
+    instantSearch: (req, res) => {
+        if(req.body.search) {
+            Product.search({
+                query_string: {
+                    query: req.body.search
+                }
+            }, (error, results) => {
+                if(error) {
+                    let errors = {}
+
+                    errors.status = 500;
+                    errors.message = error;
+
+                    res.status(errors.status).json(errors)
+                } else {
+                    let data = results.hits.hits;
+                    
+                    res.json(data)
                 }
             })
         }

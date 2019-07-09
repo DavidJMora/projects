@@ -4,6 +4,7 @@ const passport = require('passport');
 
 
 let userController = require('../users/controllers/userController');
+let cartController = require('../cart/controllers/cartController');
 let signupValidation = require('./utils/signupValidation');
 
 /* GET users listing. */
@@ -19,36 +20,7 @@ router.get('/signup', signupValidation, function(req, res, next) {
   res.render('auth/signup', {errors: req.flash('errors'), error_msg: null})
 })
 
-router.post('/signup', signupValidation, function(req, res, next) {
-  let errorValidate = req.validationErrors();
-
-  if(errorValidate) {
-    
-    res.render('auth/signup', {error_msg: true, errorValidate: errorValidate, errors: []})
-
-    return 
-  }
-
-  userController.signup(req.body)
-    .then(user => {
-      req.logIn(user, function(error) {
-        if(error) {
-          res.status(400).json({
-            confirmation: false,
-            message: error
-          })
-        } else {
-          res.redirect('/')
-        }
-      })
-    })
-    .catch(error => {
-      // create flash message
-      req.flash('errors', error.message)
-
-      return res.redirect(301, '/api/users/signup')
-    })
-})
+router.post('/signup', signupValidation, userController.signup, cartController.createUserCart)
 
 router.get('/logout', function(req, res) {
   req.logout()

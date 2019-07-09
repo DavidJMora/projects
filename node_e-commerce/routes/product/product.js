@@ -41,20 +41,7 @@ router.post('/search', function(req, res) {
 
 router.get('/search', productController.productByQuery)
 
-router.get('/:id', function(req, res) {
-    
-    productController.getProductById(req.params.id)
-        .then(product => {
-            console.log('product', product);
-            
-            res.render('product/product', {
-                product: product
-            })
-        })
-        .catch(error => {
-            res.status(error.status).json(error)
-        })
-})
+
 
 router.get('/getproductbycategoryid/:id', function(req, res) {
     productController.getProductByCategoryID(req.params.id)
@@ -72,5 +59,19 @@ router.post('/search', function(req, res) {
     res.redirect('product/search')
 })
 
+router.post('/instant-search', productController.instantSearch)
+
+router.get('/:id', function(req, res) {
+    
+    productController.getProductById(req.params.id)
+        .then(product => {            
+            res.render('product/product', {
+                product: product
+            })
+        })
+        .catch(error => {
+            res.status(error.status).json(error)
+        })
+})
 
 module.exports = router

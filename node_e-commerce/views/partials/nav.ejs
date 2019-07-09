@@ -45,11 +45,16 @@
             <li class="nav-item">
                 <a class="nav-link" href="/api/users/signin">Sign in</a>
             </li>
-        
+
         <% } else { %>
 
             <li class="nav-item">
                 <a class="nav-link" href="/api/users/edit-profile">logged in as <%= user.email %></a>
+            </li>
+            <li> 
+                <a href='/api/cart'><span class=" fa-stack has-badge" data-count="<%= cart %>">
+                    <i class="nav-item fas fa-cat"></i>
+                </span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/api/users/logout">Logout</a>

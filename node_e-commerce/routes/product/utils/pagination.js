@@ -10,12 +10,9 @@ function paginate(req, res) {
         .populate('category')
         .exec()
         .then(products => {
-            console.log('PRODUCTS1', products);
-            
             return products
         })
         .then(products => {
-            console.log('PRODUCTS2', products);
             Product.count()
                 .exec()
                 .then(count => {

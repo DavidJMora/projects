@@ -18,10 +18,12 @@ let Category = require('./routes/product/models/Category');
 require('dotenv').config();
 
 let indexRouter = require('./routes/index');
+let cartRouter = require('./routes/cart/cart')
 let usersRouter = require('./routes/users/users');
 let productRouter = require('./routes/product/product');
 let adminRouter = require('./routes/admin/admin')
 
+let cartMiddleware = require('./routes/cart/utils/cartMiddleware')
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
 .then(() => {
@@ -86,6 +88,8 @@ app.use(function(req, res, next) {
 
 })
 
+app.use(cartMiddleware)
+
 app.use(expressValidator({
   errorFormatter: function(param, message, value) {
     let namespace = param.split('.');
@@ -105,6 +109,7 @@ app.use(expressValidator({
 }))
 
 app.use('/', indexRouter);
+app.use('/api/cart', cartRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/product', productRouter);
 app.use('/api/admin', adminRouter)

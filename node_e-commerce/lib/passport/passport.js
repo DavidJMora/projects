@@ -25,8 +25,6 @@ module.exports = function(passport) {
             }
 
             if(!user) {
-                console.log('user: ', user);
-                
                 done(null, false, req.flash('loginMessage', 'User does not exist'))
             } else {
                 bcrypt.compare(password, user.password)
