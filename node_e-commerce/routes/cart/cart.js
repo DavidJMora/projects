@@ -69,7 +69,7 @@ router.post('/payment', function(req, res, next) {
                         }
                     }, (error, updated) => {
                         if(updated) {
-                            res.send('Payment was successful')
+                            res.render('cart/thanks')
                         }
                     })
                 }
